@@ -10,25 +10,62 @@ void decodeAndPrintMatrix(char expression[], int n) {
     for (int i = 0; i < strlen(expression); i++) {
         if (expression[i] == '2') {
             subSize /= 2;
-            continue;
-        }
-
-        int value = expression[i] - '0';
-        for (int j = y; j < y + subSize; j++) {
-            for (int k = x; k < x + subSize; k++) {
-                matrix[j][k] = value;
+            // continue;
+            if (subSize != 1)
+            {
+                continue;
+            }else
+            {
+                for (int j = y; j < y + 2; j++) {
+                    for (int k = x; k < x +2; k++)
+                    {
+                        matrix[j][k] = expression[++i] - '0';
+                    }
+                }
             }
         }
+     
+        
+        int value = expression[i] - '0';
+        if (value == 0 && subSize != 1)
+        {
+            for (int j = y; j < y + subSize; j++) {
+                for (int k = x; k < x + subSize; k++) {
+                    matrix[j][k] = 0;
+                }
+            }
+        }
+        // else if (value == 1 && subSize != 1)
+        // {
+        //     for (int j = y; j < y + subSize; j++) {
+        //         for (int k = x; k < x + subSize; k++) {
+        //             matrix[j][k] = 1;
+        //         }
+        //     }
+        // }else if (subSize == 1)
+        // {
+            
+        // }
+        
+
+        
+        
+        // for (int j = y; j < y + subSize; j++) {
+        //     for (int k = x; k < x + subSize; k++) {
+        //         matrix[j][k] = value;
+        //     }
+        // }
 
         x += subSize;
-        if (x >= n) {
-            x = 0;
-            y += subSize;
-        }
-        if (y >= n) {
-            y = 0;
-            subSize = n;
-        }
+        // y += subSize;
+        // if (x >= n) {
+        //     x = 0;
+        //     y += subSize;
+        // }
+        // if (y >= n) {
+        //     y = 0;
+        //     subSize = n;
+        // }
     }
 
     for (int i = 0; i < n; i++) {
