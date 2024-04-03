@@ -2,6 +2,12 @@
 #include <stdlib.h>
 #define SWAP(x,y) {int t; t = x; x = y; y = t;}
 
+void print(int a[], int n) {
+    for (int i=0; i<n; i++)
+    printf("%d ", a[i]);
+    printf("\n");
+}
+
 int getMinIndex(int d[], int left, int right) {
     int i=0, minIndex = left;
     for ((i=left+1); i<right; i++) {
@@ -23,50 +29,36 @@ void selectSort(int d[], int n) {
         SWAP(d[i], d[index]);
     }
     printf("%d ", select_exchange*3);
+    // print(d, n);  
     printf("\n");
 }
 
-void print(int a[], int n) {
-    for (int i=0; i<n; i++)
-    printf("%d ", a[i]);
-    printf("\n");
-}
+
 
 void insertionSort(int a[], int n) {
-
-    int target=0, i=0, j=0, insert_compare = 0, insert_exchange = 0;
-    for (i=1; i<n; i++) {
+    int target = 0, i = 0, j = 0, insert_compare = 0, insert_exchange = 0;
+    for (i = 1; i < n; i++) {
         target = a[i];
         insert_exchange++;
-        for (j=i; j >=0 ; j--){
-            if (j > 0 || j < 0)
+        for (j = i; j >= 0; j--) {
+            if (j == 0)
             {
                 insert_compare++;
-                if (j < 0)
-                {
-                   break;
-                }
+                break;
             }
-            if (a[j-1]>target || a[j-1]<target)
-            {
-                insert_compare++;
-                if (a[j-1]<target)
-                {
+            else if (j >0) {
+                insert_compare+=2;
+                if (j == 0 || a[j-1] <= target) {
                     break;
                 }
-                
             }
-            if ((j>0) &&(a[j-1]>target))
-            {
-                a[j] = a[j-1];
-                insert_exchange++;
-            }
-            
+            a[j] = a[j-1];
+            insert_exchange++;
         }
         a[j] = target;
-        insert_exchange++;    
-        printf("%d\n", insert_compare);       
+        insert_exchange++;
     }
+    // print(a, n);
     printf("%d ", insert_compare);
     printf("%d\n", insert_exchange);
 }
