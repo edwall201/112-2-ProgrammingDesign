@@ -61,18 +61,43 @@ int main() {
                 arr[i].left = temp;
 
             }
-        }
-        
-        
-        // struct dice temp = arr[];
-        
-        
+        }    
     }
-    scanf(n)
-    int ans[n];
+    int ans[n], same_count[6] = {0}, first_2 = 0, second_2 = 0, temp = 0;
     for (int i = 0; i < n; i++) {
-        printf("%d ", arr[i].up);
+        ans[i] = arr[i].up;
+        same_count[arr[i].up - 1] ++;  
     }
-    printf("\n");
+    for (int i = 0; i < 6; i++)
+    {
+        if (same_count[i] ==1)
+        {
+            temp += i+1;
+        }
+        if (same_count[i] == 4) // all the same
+        {
+           printf("%d\n",18);
+           break;
+        }
+        if (same_count[i] == 2 && first_2 ==0) 
+        {
+            first_2 =1;
+        }else if (same_count[i] == 2 && first_2 ==1) // 2 pairs are the same
+        {
+            second_2 = 1;
+            printf("%d\n", (i+1) * 2);
+            break;
+        }else if ((first_2 + second_2) == 1 && i ==5)
+        {
+            printf("%d\n", temp);
+        }else if ((first_2 + second_2) == 0 && i ==5)
+        {
+            printf("%d\n",0);
+           break;
+        }
+                
+    }
+    
+    
     return 0;
 }
