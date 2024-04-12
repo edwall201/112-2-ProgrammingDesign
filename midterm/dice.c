@@ -61,21 +61,21 @@ int main()
             arr1[1].up =arr1[1].behind;
             arr1[1].behind = arr1[1].down;
             arr1[1].down = arr1[1].front;
-            arr1[1].front = temp1;
+            arr1[1].front = temp2;
         }else if (num2 == 2) //左
         {
-            temp1 = arr1[1].up;
+            temp2 = arr1[1].up;
             arr1[1].up =arr1[1].rightt;
             arr1[1].rightt = arr1[1].down;
             arr1[1].down = arr1[1].leff;
-            arr1[1].leff = temp1;
+            arr1[1].leff = temp2;
         }else if (num2 == 3) // 右
         {
-            temp1 = arr1[1].up;
+            temp2 = arr1[1].up;
             arr1[1].up =arr1[1].leff;
             arr1[1].leff = arr1[1].down;
             arr1[1].down = arr1[1].rightt;
-            arr1[1].rightt = temp1;
+            arr1[1].rightt = temp2;
         }
         
     }
@@ -113,34 +113,41 @@ int main()
             arr2[1].up =arr2[1].behind;
             arr2[1].behind = arr2[1].down;
             arr2[1].down = arr2[1].front;
-            arr2[1].front = temp1;
+            arr2[1].front = temp2;
         }else if (num2 == 2) //左
         {
-            temp1 = arr1[1].up;
+            temp2 = arr2[1].up;
             arr2[1].up =arr2[1].rightt;
             arr2[1].rightt = arr2[1].down;
             arr2[1].down = arr2[1].leff;
-            arr2[1].leff = temp1;
+            arr2[1].leff = temp2;
         }else if (num2 == 3) // 右
         {
-            temp1 = arr2[1].up;
+            temp2 = arr2[1].up;
             arr2[1].up =arr2[1].leff;
             arr2[1].leff = arr2[1].down;
             arr2[1].down = arr2[1].rightt;
-            arr2[1].rightt = temp1;
+            arr2[1].rightt = temp2;
         }
         
     }
     for (int i = 0; i < 2; i++)
     {
         printf("%d %d %d %d %d %d\n",arr1[i].front ,arr1[i].up ,arr1[i].behind ,arr1[i].down ,arr1[i].rightt ,arr1[i].leff);
-
     }
     for (int i = 0; i < 2; i++)
     {
         printf("%d %d %d %d %d %d\n",arr2[i].front ,arr2[i].up ,arr2[i].behind ,arr2[i].down ,arr2[i].rightt ,arr2[i].leff);
-
     }
+    int a_score = 0, b_score = 0;
+    if (arr1[0].up == arr1[1].up) a_score = arr1[1].up;
+    else a_score = arr1[0].up * arr1[1].up;
+    if (arr2[0].up == arr2[1].up) b_score = arr2[1].up;
+    else b_score = arr2[0].up * arr2[1].up;
+    
+    if(a_score > b_score) printf("A win");
+    else if(a_score < b_score) printf("B win");
+    else printf("Tie");
     
     
     
