@@ -29,18 +29,18 @@ void insertBefore(char *article, char *p, char *q) {
 }
 
 // Function to insert word Q after word P in the article
-void insertAfter(char *article, char *p, char *q) {
-    char *pos = article;
-    int pLen = strlen(p);
-    int qLen = strlen(q);
-    while ((pos = strstr(pos, p)) != NULL) {
-        char *insertPos = pos + pLen;  // Position to insert after the found word
-        memmove(insertPos + qLen + 1, insertPos, strlen(insertPos) + 1);  // Move characters after insert position
-        insertPos[0] = ' ';  // Add a space after the found word
-        memcpy(insertPos + 1, q, qLen);  // Insert Q after the found word
-        pos = insertPos + qLen + 1;  // Move the pointer to the end of the inserted word
-    }
-}
+// void insertAfter(char *article, char *p, char *q) {
+//     char *pos = article;
+//     int pLen = strlen(p);
+//     int qLen = strlen(q);
+//     while ((pos = strstr(pos, p)) != NULL) {
+//         char *insertPos = pos + pLen;  // Position to insert after the found word
+//         memmove(insertPos + qLen + 1, insertPos, strlen(insertPos) + 1);  // Move characters after insert position
+//         insertPos[0] = ' ';  // Add a space after the found word
+//         memcpy(insertPos + 1, q, qLen);  // Insert Q after the found word
+//         pos = insertPos + qLen + 1;  // Move the pointer to the end of the inserted word
+//     }
+// }
 
 
 // Function to delete word P from the article
@@ -48,9 +48,15 @@ void deleteWord(char *article, char *p) {
     char *pos = article;
     int pLen = strlen(p);
     while ((pos = strstr(pos, p)) != NULL) {
-        memmove(pos, pos + pLen + 1, strlen(pos + pLen) + 1);
+        if (*(pos + pLen) != '\0') {
+            memmove(pos, pos + pLen + 1, strlen(pos + pLen) + 1);
+        } else {
+            *pos = '\0';
+            break;
+        }
     }
 }
+
 
 // Function to count word frequencies and sort them
 void countFrequency(char *article) {
@@ -114,6 +120,7 @@ int main() {
     char *original = strdup(article);
     char *original1 = strdup(article);
     char *original2 = strdup(article);
+    
     if (strcspn(article, p) == strlen(article))
     {
         for (int i = 0; i < 3; i++)
@@ -129,11 +136,11 @@ int main() {
         insertBefore(original1, p, q);
         printf("%s\n", original1);
         deleteWord(original1, p);
-        // printf("%s\n", original);
-        if (strstr(original, p) == NULL){}
-        else deleteWord(original1, q);
-        
+        deleteWord(original1, q);
         printf("%s\n", original1);
+        // if (strstr(original, p) == NULL){}
+        // else deleteWord(original1, q);
+        
         countFrequency(original);
     }
 
