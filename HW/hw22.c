@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <ctype.h>
 #include <string.h>
+#include <ctype.h>
 
 int check_next_k(char *s, int start, int k, char case_to_check) {
     for (int i = start; i < start + k; i++) {
@@ -14,23 +14,23 @@ int check_next_k(char *s, int start, int k, char case_to_check) {
 int find_max_length(char *s, int k) {
     int max_length = 0, i = 0, n = strlen(s);
     while (i <= n - k) {
-        int start = i;
-        int current = 0;
-        int last_case = isupper(s[start]);  // Determine the initial expected case
+        int first = i;
+        int now = 0;
+        int last_case = isupper(s[first]);  // Determine the initial expected case
 
-        while (start + k <= n) {
-            if (check_next_k(s, start, k, last_case ? 'U' : 'L')) {
-                current += k;
-                start += k;
-                last_case = !last_case;  // Toggle the case expectation
+        while (first + k <= n) {
+            if (check_next_k(s, first, k, last_case ? 'U' : 'L')) {
+                now += k;
+                first += k;
+                last_case = !last_case;
             } else {
-                break;  // Segment did not match, break to try a new starting point
+                break;
             }
         }
 
-        if (current > max_length) max_length = current;
-        if (current == 0) i++;  // No valid segment found at the current start, move by 1
-        else i = start - k + 1;  // Start again from the last valid k segment's next position
+        if (now > max_length) max_length = now;
+        if (now == 0) i++;
+        else i = first - k + 1; 
         
     }
     if(max_length == k) max_length =0;
@@ -38,9 +38,9 @@ int find_max_length(char *s, int k) {
 }
 
 int main() {
-    int N;
-    scanf("%d", &N);
-    for (int i = 0; i < N; i++) {
+    int num;
+    scanf("%d", &num);
+    for (int i = 0; i < num; i++) {
         char s[51];
         int k;
         scanf("%s %d", s, &k);
