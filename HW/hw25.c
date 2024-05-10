@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <stdlib.h>
 #define ShapeText(TYPE) char name[10];\
 double (*perimeter)(struct TYPE*);\
 double (*area)(struct TYPE*);\
@@ -110,52 +111,40 @@ int main()
     int num;
     scanf("%d", &num);
     double perimeter_sum, area_sum;
+    shape_t *shapes[num];
+
     for (int i = 0; i < num; i++){
         char name[10];
         scanf("%s", name);
-        if (strcmp(name, "C") == 0){
-            circle_t c;
-            scanf("%lf", &c.radius);
-            c.perimeter = circle_perimeter;
-            c.area = circle_area;
-            printf("%.2f ", c.perimeter(&c));
-            printf("%.2f\n", c.area(&c));
-            perimeter_sum += c.perimeter(&c);
-            area_sum += c.area(&c);
-        }else if(strcmp(name, "R") == 0){
-            rectangle_t r;
-            scanf("%lf", &r.length);
-            scanf("%lf", &r.weight);
-            r.perimeter = retangle_perimeter;
-            r.area = retangle_area;
-            printf("%.2f ", r.perimeter(&r));
-            printf("%.2f\n", r.area(&r));
-            perimeter_sum += r.perimeter(&r);
-            area_sum += r.area(&r);
-        }else if(strcmp(name, "S") == 0){
-            square_t s;
-            scanf("%lf", &s.edge);
-            s.perimeter = square_perimeter;
-            s.area = squre_area;
-            printf("%.2f ", s.perimeter(&s));
-            printf("%.2f\n", s.area(&s));
-            perimeter_sum += s.perimeter(&s);
-            area_sum += s.area(&s);
-        }else if(strcmp(name, "T") == 0){
-            triangle_t t;
-            scanf("%lf", &t.edge1);
-            scanf("%lf", &t.edge2);
-            scanf("%lf", &t.edge3);
-            t.perimeter = tranigle_perimeter;
-            t.area = tranigle_area;
-            printf("%.2f ", t.perimeter(&t));
-            printf("%.2f\n", t.area(&t));
-            perimeter_sum += t.perimeter(&t);
-            area_sum += t.area(&t);
+        shapes[i] = CreateShape(name);
+        if(shapes[i])
+        {
+            if(strcmp(name, "C") == 0 )
+            {
+                circle_t *c = (circle_t*)shapes[i];
+                scanf("%lf", &c->radius);
+            }else if(strcmp(name, "R") == 0)
+            {
+                rectangle_t *r = (rectangle_t*)shapes[i];
+                scanf("%lf %lf", &r->length, &r->weight);
+            }else if(strcmp(name, "S") == 0)
+            {
+                square_t *s = (square_t*)shapes[i];
+                scanf("%lf", &s->edge); 
+            }else if(strcmp(name, "T") == 0)
+            {
+                triangle_t *t = (triangle_t*)shapes[i];
+                scanf("%lf %lf %lf", &t->edge1, &t->edge2, &t->edge3);
+            }
+            
         }
+        printf("%.2f %.2f\n", shapes[i]->perimeter(shapes[i]), shapes[i]->area(shapes[i]));
+        perimeter_sum += shapes[i]->perimeter(shapes[i]);
+        area_sum += shapes[i]->area(shapes[i]);
+        
     }
     printf("%.2f ", perimeter_sum);
-    printf("%.2f \n", area_sum);
+    printf("%.2f \n",area_sum);
     return 0;
 
 }
