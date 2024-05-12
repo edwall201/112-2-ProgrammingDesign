@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/Edward/OneDrive/文件/112-2-ProgrammingDesign/HW",
-      "program": "c:/Users/Edward/OneDrive/文件/112-2-ProgrammingDesign/HW/build/Debug/outDebug",
+      "cwd": "c:/Users/Edward/OneDrive/文件/112-2-ProgrammingDesign",
+      "program": "c:/Users/Edward/OneDrive/文件/112-2-ProgrammingDesign/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

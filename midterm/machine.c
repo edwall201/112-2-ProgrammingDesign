@@ -19,7 +19,7 @@ int isVariable(char temp[])
                 }
             }
             
-            
+    
         }
         
     }
