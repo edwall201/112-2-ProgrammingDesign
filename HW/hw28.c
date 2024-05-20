@@ -54,8 +54,5 @@ int main()
             ans = max(ans, dp[i]);
         }
         printf("%d\n", ans);
-        
-        
-        
     }
 }
