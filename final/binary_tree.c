@@ -28,7 +28,7 @@ btree buildPreI(char in[], char pre[], int start, int end, int *preIndex){
     if(start > end) return NULL;
     btree node = newNode(pre[(*preIndex)++]);
     if(start == end) return node;
-    int inIndex = search(pre, start, end, node->data);
+    int inIndex = search(in, start, end, node->data);
     node -> left = buildPreI(in, pre, start, inIndex-1, preIndex);
     node -> right = buildPreI(in, pre, inIndex + 1, end, preIndex);
     return node;
@@ -38,7 +38,7 @@ btree buildPostI(char in[], char post[], int start, int end, int *postIndex){
     if(start > end) return NULL;
     btree node = newNode(post[(*postIndex)--]);
     if(start == end) return node;
-    int inIndex = search(post, start, end, node->data);
+    int inIndex = search(in, start, end, node->data);
     node -> left = buildPostI(in, post, start, inIndex-1, postIndex);
     node -> right = buildPostI(in, post, inIndex + 1, end, postIndex);
     return node;
