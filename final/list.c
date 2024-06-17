@@ -1,121 +1,150 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <ctype.h>
 
-void insertBefore(char *article, char *p, char *q) {
-    int pLen = strlen(p);
-    int qLen = strlen(q);
-    char *pos = article;
-    while ((pos = strstr(pos, p)) != NULL) {
-        if ((pos == article || isspace(*(pos - 1))) && (isspace(*(pos + pLen)) || *(pos + pLen) == '\0')) {
-            int offset = pos - article;
-            int articleLen = strlen(article);
-            memmove(pos + qLen + 1, pos, articleLen - offset + 1);
-            memcpy(pos, q, qLen);
-            pos[qLen] = ' ';
-            pos += qLen + pLen + 1;
-        } else {
-            pos += pLen;
+#define MAX_LEN 1000
+
+typedef struct{
+    char *word;
+    int count;
+} WordEntry;
+
+void insertQbeforeP(char *article[], char p[], char q[], int totalWords){
+    char *newArticle[MAX_LEN];
+    int newWords = 0;
+    for(int i=0; i<totalWords; i++){
+        if(strcmp(article[i], p) == 0) newArticle[newWords++] = q;
+        newArticle[newWords++] = article[i];
+    }
+    for(int i=0; i<newWords; i++){
+        printf("%s ", newArticle[i]);
+    }
+    printf("\n");
+}
+
+void replacePwithQ(char *article[], char p[], char q[], int totalWords){
+    for(int i=0; i<totalWords; i++){
+        if(strcmp(article[i], p) == 0){
+            printf("%s ", q);
+        }else{
+            printf("%s ", article[i]);
         }
     }
+    printf("\n");
 }
 
-void replace(char *article, char *p, char *q){
-    char *pos = article;
-    int plen = strlen(p);
-    int qlen = strlen(q);
-    while ((pos = strstr(pos, p)) != NULL) {
-        memmove(pos + qlen, pos + plen, strlen(pos + plen) + 1);
-        memcpy(pos, q, qlen);
-        pos += qlen;
+void deleteP(char *article[], char p[], int totalWords){
+    for(int i=0; i<totalWords; i++){
+        if(strcmp(article[i], p) != 0){
+            printf("%s ", article[i]);
+        }
     }
+    printf("\n");
 }
 
-void deleteWord(char *article, char *p){
-    char *pos = article;
-    int plen = strlen(p);
-    while ((pos = strstr(pos, p)) != NULL) {
-        memmove(pos, pos + plen, strlen(pos + plen) + 1);
-    }
-}
+void removeLowFrequency(char *article[], int n, int totalWords){
+    WordEntry entries[MAX_LEN] = {0};
+    int uniqueWords = 0;
 
-void countFrequency(char *article, int deleteNum){
-    char *words[50];
-    int freq[50] = {0};
-    int count = 0;
-    char articleCopy[1000];
-    strcpy(articleCopy, article);
-
-    char *token = strtok(articleCopy, " ");
-    while (token != NULL) {
+    for(int i=0; i<totalWords; i++){
         int found = 0;
-        for (int i = 0; i < count; i++) {
-            if (strcmp(words[i], token) == 0) {
-                freq[i]++;
+        for(int j=0; j<uniqueWords; j++){
+            if(strcmp(article[i], entries[j].word) == 0){
+                entries[j].count++;
                 found = 1;
                 break;
             }
         }
-        if (!found) {
-            words[count] = token;
-            freq[count] = 1;
-            count++;
+        if(!found){
+            entries[uniqueWords].word = article[i];
+            entries[uniqueWords].count = 1;
+            uniqueWords++;
         }
+    }
+
+    for(int i=0; i<totalWords; i++){
+        for(int j=0; j<uniqueWords; j++){
+            if(strcmp(article[i], entries[j].word) == 0 && entries[j].count >= n){
+                printf("%s ", article[i]);
+                break;
+            }
+        }
+    }
+    printf("\n");
+}
+
+int compare(const void *a, const void *b){
+    WordEntry *word1 = (WordEntry *)a;
+    WordEntry *word2 = (WordEntry *)b;
+    if(word1->count != word2->count) return word1->count-word2->count;  // 升序
+    else return strcmp(word1->word, word2->word);    // 字典升序
+}
+
+void outputFrequency(char *article[], int totalWords){
+    WordEntry entries[MAX_LEN] = {0};
+    int uniqueWords = 0;
+
+    for(int i=0; i<totalWords; i++){
+        int found = 0;
+        for(int j=0; j<uniqueWords; j++){
+            if(strcmp(article[i], entries[j].word) == 0){
+                entries[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if(!found){
+            entries[uniqueWords].word = article[i];
+            entries[uniqueWords].count = 1;
+            uniqueWords++;
+        }
+    }
+    qsort(entries, uniqueWords, sizeof(WordEntry), compare);
+
+    int count = (uniqueWords<3)? uniqueWords : 3;
+    for(int i=0; i<count; i++){
+        printf("%s:%d\n", entries[i].word, entries[i].count);
+    }
+}
+
+int main(){
+    char p[100], q[100], article[MAX_LEN];
+    int c, n=0;
+
+    fgets(article, sizeof(article), stdin);
+    article[strcspn(article, "\n")] = 0;
+
+    scanf("%s", p);
+    scanf("%s", q);
+    scanf("%d", &c);
+    if(c==4) scanf("%d", &n);
+
+    char *arr[MAX_LEN];
+    int totalWords = 0;
+    char *token = strtok(article, " ");
+    while (token != NULL){
+        arr[totalWords++] = token;
         token = strtok(NULL, " ");
     }
-
-    for (int i = 0; i < count; i++) {
-        if (freq[i] < deleteNum) {
-            deleteWord(article, words[i]);
-        }
+    
+    
+    switch (c)
+    {
+    case 1:
+        insertQbeforeP(arr, p, q, totalWords);
+        break;
+    case 2:
+        replacePwithQ(arr, p, q, totalWords);
+        break;
+    case 3:
+        deleteP(arr, p, totalWords);
+        break;
+    case 4:
+        removeLowFrequency(arr, n, totalWords);
+    case 5:
+        outputFrequency(arr, totalWords);
+        break;
+    default:
+        break;
     }
-}
-
-void removeExtraSpaces(char *str) {
-    char *dest = str;
-    char *src = str;
-    while (*src != '\0') {
-        while (isspace(*src) && (src == str || isspace(*(src - 1)))) {
-            src++;
-        }
-        *dest++ = *src++;
-    }
-    *dest = '\0';
-}
-
-int main() {
-    char article[1000], p[22], q[22];
-    int command = 0;
-    fgets(article, sizeof(article), stdin);
-    fgets(p, sizeof(p), stdin);
-    fgets(q, sizeof(q), stdin);
-    scanf("%d", &command);
-    article[strcspn(article, "\n")] = '\0';
-    p[strcspn(p, "\n")] = '\0';
-    q[strcspn(q, "\n")] = '\0';
-
-    if (command == 1) {
-        insertBefore(article, p, q);
-        removeExtraSpaces(article);
-        printf("%s\n", article);
-    } else if (command == 2) {
-        replace(article, p, q);
-        removeExtraSpaces(article);
-        printf("%s\n", article);
-    } else if (command == 3) {
-        deleteWord(article, p);
-        removeExtraSpaces(article);
-        printf("%s\n", article);
-    } else if (command == 4) {
-        int delete_num = 0;
-        scanf("%d", &delete_num);
-        countFrequency(article, delete_num);
-        removeExtraSpaces(article);
-        printf("%s\n", article);
-    } else if(command == 5){
-
-    }
-
-    return 0;
 }
