@@ -6,63 +6,67 @@ typedef struct
 {
     char *word;
     int count;
-} WordEntry;
+} wordEntry;
 
-void insertBefore(char *article[], char p[], char q[], int totalwork) {
+void insertBefore(char *article[], char p[], char q[], int totalocunt){
     char *newArticle[1000];
-    int newWords = 0;
-    for (int i = 0; i < totalwork; i++) {
-        if (strcmp(article[i], p) == 0) newArticle[newWords++] = q;
-        newArticle[newWords++] = article[i];
+    int newCount = 0;
+    for (int i = 0; i < totalocunt; i++)
+    {
+        if(strcmp(article[i], p) == 0) newArticle[newCount ++] = q;
+        newArticle[newCount ++] = article[i];
     }
-    for (int i = 0; i < newWords; i++) {
+    for (int i = 0; i < newCount; i++)
+    {
         printf("%s ", newArticle[i]);
     }
     printf("\n");
+    
 }
 
-void replace(char *article[], char p[], char q[], int totalcount) {
-    for (int i = 0; i < totalcount; i++) {
+void replace(char *article[], char p[], char q[], int totalcount){
+    for (int i = 0; i < totalcount; i++)
+    {
         if (strcmp(article[i], p) == 0) printf("%s ", q);
-        else printf("%s ", article[i]);
+        else printf("%s ", article[i]);   
     }
     printf("\n");
 }
 
-void delete(char *article[], char p[], int totalcount) {
-    for (int i = 0; i < totalcount; i++) {
-        if (strcmp(article[i], p) != 0) printf("%s ", article[i]);
+void delete(char *article[], char p[], char q[], int totalcount){
+    for (int i = 0; i < totalcount; i++)
+    {
+       if (strcmp(article[i], p) != 0) printf("%s ", article[i]);
     }
     printf("\n");
 }
 
-void removelowfreq(char *article[], int n, int totalcount){
-    WordEntry entries[1000] = {0};
-    int uniquesWord = 0;
+void lowfrequency(char *article[], int n, int totalcount){
+    wordEntry wordentry[1000] = {0};
+    int uniqueword = 0;
     for (int i = 0; i < totalcount; i++)
     {
         int found = 0;
-        for (int j = 0; j < uniquesWord; j++){
-            if(strcmp(article[i], entries[j].word) == 0){
-                entries[j].count ++;
+        for (int j = 0; j < uniqueword; j++)
+        {
+            if(strcmp(article[i], wordentry[j].word) == 0){
+                wordentry[j].count ++;
                 found = 1;
                 break;
             }
         }
         if(!found){
-            entries[uniquesWord].word = article[i];
-            entries[uniquesWord].count = 1;
-            uniquesWord ++;
-        }
+            wordentry[uniqueword].word = article[i];
+            wordentry[uniqueword].count ++;
+            uniqueword ++;
+        }   
     }
     for (int i = 0; i < totalcount; i++)
     {
-        for (int j = 0; j < uniquesWord; j++)
+        for (int j = 0; j < uniqueword; j++)
         {
-            if (strcmp(article[i], entries[j].word) == 0 && entries[j].count >=n)
-            {
+            if(strcmp(article[i], wordentry[j].word) == 0 && wordentry[j].count >=3){
                 printf("%s ", article[i]);
-                break;
             }
         }
     }
@@ -70,70 +74,65 @@ void removelowfreq(char *article[], int n, int totalcount){
 }
 
 int compare(const void *a, const void *b){
-    WordEntry *word1 = (WordEntry *)a;
-    WordEntry *word2 = (WordEntry *)b;
-    if(word1 -> count != word2 -> count) return word1->count-word2->count;
+    wordEntry *word1 = (wordEntry *)a;
+    wordEntry *word2 = (wordEntry *)b;
+    if(word1 -> count != word2 ->count) return word1->count-word2->count;
     else return strcmp(word1->word, word2->word);
 }
 
-void outputFreq(char *article[], int totalcount){
-    WordEntry entries[1000] = {0};
-    int uniquesWord = 0;
+void frequentCount(char *article[], int totalcount){
+    wordEntry wordentry[1000] = {0};
+    int uniqueword = 0;
     for (int i = 0; i < totalcount; i++)
     {
         int found = 0;
-        for (int j = 0; j < uniquesWord; j++){
-            if(strcmp(article[i], entries[j].word) == 0){
-                entries[j].count ++;
+        for (int j = 0; j < uniqueword; j++)
+        {
+            if(strcmp(article[i], wordentry[j].word) == 0){
+                wordentry[j].count ++;
                 found = 1;
                 break;
             }
         }
         if(!found){
-            entries[uniquesWord].word = article[i];
-            entries[uniquesWord].count = 1;
-            uniquesWord ++;
-        }
+            wordentry[uniqueword].word = article[i];
+            wordentry[uniqueword].count ++;
+            uniqueword ++;
+        }   
     }
-    qsort(entries, uniquesWord, sizeof(WordEntry), compare);
+    qsort(wordentry, uniqueword, sizeof(wordEntry), compare);
     for (int i = 0; i < 3; i++)
     {
-        printf("%s: %d", entries[i].word, entries[i].count);
+        printf("%s: %d", wordentry[i].word, wordentry[i].count);
         printf("\n");
     }
-    
 }
 
-
-int main() {
+int main(){
     char article[1000], p[100], q[100];
-    int command = 0, n;
+    int command = 0;
     fgets(article, sizeof(article), stdin);
-    article[strcspn(article, "\n")] = 0;
+    article[strcspn(article,"\n")] = 0;
     scanf("%s", p);
     scanf("%s", q);
     scanf("%d", &command);
-    if (command == 4) scanf("%d", &n);
-
     char *arr[1000];
-    int totalWorks = 0;
+    int totalcount = 0;
     char *token = strtok(article, " ");
-    while (token != NULL) {
-        arr[totalWorks++] = token;
+    while (token != NULL)
+    {
+        arr[totalcount ++] =token;
         token = strtok(NULL, " ");
     }
-
-    if (command == 1) {
-        insertBefore(arr, p, q, totalWorks);
-    } else if (command == 2) {
-        replace(arr, p, q, totalWorks);
-    } else if (command == 3) {
-        delete(arr, p, totalWorks);
-    } else if (command == 4) {
-        removelowfreq(arr, n, totalWorks);
-    } else if(command == 5){
-        outputFreq(arr, totalWorks);
+    if(command == 1) insertBefore(arr, p, q, totalcount);
+    else if(command == 2) replace(arr, p, q, totalcount);
+    else if(command == 3) delete(arr, p, q, totalcount);
+    else if(command == 4){
+        int n = 0;
+        scanf("%d", &n);
+        lowfrequency(arr, n, totalcount);
     }
-
+    else if(command == 5) frequentCount(arr, totalcount);
+     
     return 0;
 }
