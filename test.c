@@ -1,124 +1,93 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <math.h>
+typedef struct node_s {
+    char data;
+    struct node_s * right, * left;
+} tree_t;
+typedef tree_t * btree;
 
-#define shapeText(TYPE) char name[10]; \
-    int (*perimeter)(struct TYPE*); \
-    int (*area)(struct TYPE*);
-typedef struct shape_s { shapeText(shape_s); } shape_t;
-
-typedef struct circle_s {
-    shapeText(circle_s);
-    int radius;
-} circle_t;
-
-typedef struct rectangle_s{
-    shapeText(rectangle_s);
-    int width, height;
-} rectangle_t;
-
-typedef struct square_s{
-    shapeText(square_s);
-    int side;
-} square_t;
-
-typedef struct triangle_s {
-    shapeText(triangle_s);
-    int s1, s2, s3;
-} triangle_t;
-int circlePerimeter(circle_t *c){return c->radius * 4 *2;}
-int circleArea(circle_t *c){return c->radius * c->radius * 4;}
-int rectanglePerimeter(rectangle_t *r){return 2*(r->height + r->width);}
-int rectangleArea(rectangle_t *r){return (r->height * r->width);}
-int squarePerimeter(square_t *s){return 4*s->side;}
-int squareArea(square_t *s){return s->side*s->side;}
-int trianglePerimeter(triangle_t *t){return t->s1 + t->s2 + t->s3;}
-int triangleArea(triangle_t *t){
-    int s = (t->s1 + t->s2 + t->s3)/2;
-    return sqrt(s*(s-t->s1) * (s-t->s2) * (s-t->s3));
+btree newNode(char data){
+    btree node = (btree )malloc(sizeof(tree_t));
+    node -> data = data;
+    node->right = NULL;
+    node->left = NULL;
+    return node;
 }
 
-
-shape_t *newShape(char *name){
-    if(strcmp(name, "triangle") == 0){
-        triangle_t *t = (triangle_t *)malloc(sizeof(triangle_t));
-        strcpy(t->name, name);
-        t->perimeter = trianglePerimeter;
-        t->area = triangleArea;
-        return (shape_t *)t;
-    }else if(strcmp(name, "square") == 0){
-        square_t *s = (square_t *)malloc(sizeof(square_t));
-        strcpy(s->name, name);
-        s->perimeter = squarePerimeter;
-        s->area = squareArea;
-        return (shape_t *)s;
-    }else if(strcmp(name, "rectangle") == 0){
-        rectangle_t *r = (rectangle_t *)malloc(sizeof(rectangle_t));
-        strcpy(r->name, name);
-        r->perimeter = rectanglePerimeter;
-        r->area = rectangleArea;
-        return (shape_t *)r;
-    }else if(strcmp(name, "circle") == 0){
-        circle_t *c = (circle_t *)malloc(sizeof(circle_t));
-        strcpy(c->name, name);
-        c->perimeter = circlePerimeter;
-        c->area = circleArea;
-        return (shape_t *)c;
-    }else return NULL;
-}
-void sort(shape_t *shapes[], int count){
-    for (int i = 0; i < count; i++)
+int search(char pre[], int start, int end, char a){
+    for (int i = start; i <= end; i++)
     {
-        for (int j = 0; j < count-i-1; j++)
-        {
-            if((shapes[j]->perimeter(shapes[j]) < shapes[j+1]->perimeter(shapes[j+1])) || 
-            ((shapes[j]->perimeter(shapes[j]) == shapes[j+1]->perimeter(shapes[j+1])) && (shapes[j]->area(shapes[j]) < shapes[j+1]->area(shapes[j+1])))){
-                shape_t *temp = shapes[j];
-                shapes[j] = shapes[j+1];
-                shapes[j+1] = temp;
-            }
-        }
+        if(pre[i] == a )return i;
+    }
+    return -1;
+}
+
+btree buildPreIn(char pre[], char in[], int start, int end, int *preindex){
+    if(start > end) return NULL;
+    btree node = newNode(pre[(*preindex)++]);
+    if(start == end) return node;
+    int index = search(in, start, end, node->data);
+    node ->left = buildPreIn(pre, in, start, index-1, preindex);
+    node -> right = buildPreIn(pre, in, index+1, end, preindex);
+    return node;
+}
+
+btree buildPostIn(char pre[], char in[], int start, int end, int *preindex){
+    if(start > end) return NULL;
+    btree node = newNode(pre[(*preindex)--]);
+    if(start == end) return node;
+    int index = search(in, start, end, node->data);
+    node ->left = buildPostIn(pre, in, start, index-1, preindex);
+    node -> right = buildPostIn(pre, in, index+1, end, preindex);
+    return node;
+}
+
+int height(btree root){
+    if(root == NULL) return 0;
+    else{
+        int lheight = height(root ->left);
+        int rheigh = height(root -> right);
+        return (lheight > rheigh)? lheight + 1: rheigh + 1;
     }
 }
-void printShape(shape_t *shapes[], int count){
-    int perimeter = 0, area = 0;
-    for (int i = 0; i < count; i++)
-    {
-
-        printf("%s %d %d\n", shapes[i]->name, shapes[i]->perimeter(shapes[i]), shapes[i]->area(shapes[i]));
-        perimeter += shapes[i]->perimeter(shapes[i]);
-        area += shapes[i]->area(shapes[i]);
-    }
-    printf("%d %d\n", perimeter, area);
     
+void printLevel(btree root, int count){
+    if(root == NULL) return;
+    if(count == 1) printf("%c", root->data);
+    else if(count > 1){
+        printLevel(root ->left, count -1);
+        printLevel(root ->right, count -1);
+    }
+    
+}
+void printTree(btree root){
+    int h = height(root);
+    for (int i = 0; i <= h; i++)
+    {
+        printLevel(root, i);
+    }
 }
 int main(){
     int count = 0;
+    char type1, type2;
+    char data1[100], data2[100];
     scanf("%d", &count);
-    shape_t *shapes[count];
-    for (int i = 0; i < count; i++)
-    {   
-        char type[100];
-        scanf("%s", type);
-        shapes[i] = newShape(type);
-        if(shapes[i]){
-            if(strcmp(type,"triangle") == 0){
-                triangle_t *t = (triangle_t*)shapes[i];
-                scanf("%d %d %d", &t->s1, &t->s2, &t->s3);
-            }else if(strcmp(type, "square") == 0){
-                square_t *s = (square_t *) shapes[i];
-                scanf("%d", &s->side);
-            }else if(strcmp(type, "rectangle") == 0){
-                rectangle_t *r = (rectangle_t *) shapes[i];
-                scanf("%d %d", &r->height, &r->width);
-            }else if(strcmp(type, "circle") == 0){
-                circle_t *c = (circle_t *) shapes[i];
-                scanf("%d", &c->radius);
-            }
-        }
+    scanf(" %c ", &type1);
+    scanf("%s", data1);
+    scanf(" %c ", &type2);
+    scanf("%s", data2);
+    btree node = NULL;
+    if((type1 == 'P' && type2 == 'I') || (type1 == 'I' && type2 == 'P')){
+        char *pre = (type1 == 'P')? data1: data2;
+        char *in = (type1 == 'I')? data1: data2;
+        int preindex = 0;
+        node = buildPreIn(pre, in, 0, count - 1, &preindex);
+    }else if((type1 == 'O' && type2 == 'I') || (type1 == 'I' && type2 == 'O')){
+        char *post = (type1 == 'O')? data1: data2;
+        char *in = (type1 == 'I')? data1: data2;
+        int preindex = count - 1;
+        node = buildPostIn(post, in, 0, count - 1, &preindex);
     }
-    sort(shapes, count);
-    printShape(shapes, count);
-    
+    printTree(node);
 }
