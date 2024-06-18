@@ -1,126 +1,123 @@
 #include <stdio.h>
-#include <string.h>
+#include <math.h>
 #include <stdlib.h>
-typedef struct 
-{
-    char *word;
-    int count;
-}wordEntry;
+#include <string.h>
+#define shapeText(TYPE) char name[10]; \
+    int (*perimeter)(struct TYPE*); \
+    int (*area)(struct TYPE*);
+typedef struct shape_s { shapeText(shape_s); } shape_t;
 
+typedef struct circle_s {
+    shapeText(circle_s);
+    int radius;
+} circle_t;
 
-void insertBefore(char *article[], char p[], char q[], int totalcount){
-    for (int i = 0; i < totalcount; i++)
-    {
-        if(strcmp(article[i], p) == 0) printf("%s ", q);
-        printf("%s ",article[i]);
-    }
-    printf("\n");
+typedef struct rectangle_s{
+    shapeText(rectangle_s);
+    int width, height;
+} rectangle_t;
+
+typedef struct square_s{
+    shapeText(square_s);
+    int side;
+} square_t;
+
+typedef struct triangle_s {
+    shapeText(triangle_s);
+    int s1, s2, s3;
+} triangle_t;
+
+int circlePerimeter(circle_t *c){return c->radius * 8;}
+int circleArea(circle_t *c){return c->radius * c->radius *4;}
+int rectanglePerimeter(rectangle_t *t){return 2 *(t->height + t->width);}
+int rectangleArea(rectangle_t *t){return (t->height * t->width);}
+int squarePerimeter(square_t *s){return s->side * 4;}
+int squareArea(square_t *s){return s->side * s->side;}
+int trianglePerimeter(triangle_t *t){return t->s1 + t->s2 + t->s3;}
+int triangleArea(triangle_t *t){
+    int s = (t->s1 + t->s2 + t->s3)/2;
+    return sqrt(s*(s-t->s1)*(s-t->s2)*(s-t->s3));
 }
-void replace(char *article[], char p[], char q[], int totalcount){
-    for (int i = 0; i < totalcount; i++)
-    {
-        if(strcmp(article[i], p) == 0) printf("%s ",q);
-        else printf("%s ",article[i]);
-    }
-    printf("\n");
-}
 
-void delete(char *article[], char p[], int totalcount){
-    for (int i = 0; i < totalcount; i++)
+shape_t *newShape(char data[]){
+    if (strcmp(data, "circle")==0)
     {
-        if(strcmp(article[i], p) != 0) printf("%s ",article[i]);
-    }
-    printf("\n");
-}
-
-void lowfrequency(char *article[], int totalcount, int n){
-    wordEntry wordentry[1000] = {0};
-    int newTotal = 0;
-    for (int i = 0; i < totalcount; i++){
-        int found = 0;
-        for (int j = 0; j < newTotal; j++){
-            if(strcmp(article[i], wordentry[j].word) == 0){
-                wordentry[j].count ++ ;
-                found = 1;
-                break;
-            }
-        }
-        if(!found){
-            wordentry[newTotal].word = article[i];
-            wordentry[newTotal].count = 1;
-            newTotal ++;
-        }
-    }
-    for (int i = 0; i < totalcount; i++)
+        circle_t *c = (circle_t*)malloc(sizeof(circle_t));
+        strcpy(c->name, data);
+        c->perimeter = circlePerimeter;
+        c->area = circleArea;
+        return (shape_t *)c;
+    }else if (strcmp(data, "rectangle")==0)
     {
-        for (int j = 0; j < newTotal; j++)
-        {
-            if(strcmp(article[i], wordentry[j].word) == 0 && wordentry[j].count >=n){
-                printf("%s ", article[i]);
-                break;
-            } 
-        }   
-    }
-    printf("\n");
+        rectangle_t *r = (rectangle_t*)malloc(sizeof(rectangle_t));
+        strcpy(r->name, data);
+        r->perimeter = rectanglePerimeter;
+        r->area = rectangleArea;
+        return (shape_t *)r;
+    }else if (strcmp(data, "square")==0)
+    {
+        square_t *s = (square_t*)malloc(sizeof(square_t));
+        strcpy(s->name, data);
+        s->perimeter = squarePerimeter;
+        s->area = squareArea;
+        return (shape_t *)s;
+    }else if (strcmp(data, "triangle")==0)
+    {
+        triangle_t *t = (triangle_t*)malloc(sizeof(triangle_t));
+        strcpy(t->name, data);
+        t->perimeter = trianglePerimeter;
+        t->area = triangleArea;
+        return (shape_t *)t;
+    }else return NULL;
+    
     
 }
 
-int compare(const void *a, const void *b){
-    wordEntry *A = (wordEntry *)a;
-    wordEntry *B = (wordEntry *)b;
-    if(A->count != B->count) return A->count - B->count;
-    else return strcmp(A->word, B->word);
-}
-
-void frequency(char *article[], int totalcount){
-    wordEntry wordentry[1000] = {0};
-    int newTotal = 0;
-    for (int i = 0; i < totalcount; i++){
-        int found = 0;
-        for (int j = 0; j < newTotal; j++){
-            if(strcmp(article[i], wordentry[j].word) == 0){
-                wordentry[j].count ++ ;
-                found = 1;
-                break;
-            }
-        }
-        if(!found){
-            wordentry[newTotal].word = article[i];
-            wordentry[newTotal].count = 1;
-            newTotal ++;
-        }
-    }
-    qsort(wordentry, newTotal ,sizeof(wordEntry), compare);
-    for (int i = 0; i < 3; i++)
+void sort(shape_t *shapes[], int count){
+    for (int i = 0; i < count; i++)
     {
-        printf("%s %d\n", wordentry[i].word, wordentry[i].count);
+        for (int j = 0; j < count - i - 1; j++)
+        {
+           if( (shapes[j]->perimeter(shapes[j]) < shapes[j+1]->perimeter(shapes[j+1])) ||
+           ( (shapes[j]->perimeter(shapes[j]) == shapes[j+1]->perimeter(shapes[j+1]))  && (shapes[j]->area(shapes[j]) < shapes[j+1]->area(shapes[j+1]) ) )){
+                shape_t *temp = shapes[j+1];
+                shapes[j + 1] = shapes[j];
+                shapes[j] = temp;
+           }
+        }
     }
-        
+    for (int i = 0; i < count; i++)
+    {
+        printf("%s %d %d\n", shapes[i]->name, shapes[i]->perimeter(shapes[i]), shapes[i]->area(shapes[i]));
+    }
+    
 }
 
 int main(){
-    char article[1000], p[100], q[100];
-    int command = 0;
-    fgets(article, sizeof(article), stdin);
-    scanf("%s", p);
-    scanf("%s", q);
-    scanf("%d", &command);
-    article[strcspn(article, "\n")] = 0;
-    char *token = strtok(article, " ");
-    char *arr[100];
-    int totalwords = 0;
-    while (token !=NULL)
+    int count = 0;
+    scanf("%d", &count);
+    shape_t *shapes[count];
+    for (int i = 0; i < count; i++)
     {
-        arr[totalwords ++] = token;
-        token = strtok(NULL, " ");
+        char data[100];
+        scanf("%s", data);
+        shapes[i] = newShape(data);
+        if(shapes[i]){
+            if (strcmp(data, "circle")==0){
+                circle_t *t = (circle_t *)shapes[i];
+                scanf("%d",&t->radius);
+            }else if (strcmp(data, "rectangle")==0){
+                rectangle_t *r =(rectangle_t *)shapes[i];
+                scanf("%d %d", &r->height, &r->width);
+            }else if (strcmp(data, "square")==0){
+                square_t *s = (square_t *)shapes[i];
+                scanf("%d", &s->side);
+            }else if (strcmp(data, "triangle")==0){
+                triangle_t *t = (triangle_t *)shapes[i];
+                scanf("%d %d %d", &t->s1, &t->s2, &t->s3);
+            }
+        }
     }
-    if(command == 1) insertBefore(arr, p, q, totalwords);
-    else if(command == 2) replace(arr, p, q, totalwords);
-    else if(command == 3) delete(arr, p, totalwords);
-    else if(command == 4){
-        int n = 0;
-        scanf("%d", &n);
-        lowfrequency(arr, totalwords, n);
-    }else if(command == 5) frequency(arr, totalwords);
+    sort(shapes, count);
+    return 0;
 }
-
