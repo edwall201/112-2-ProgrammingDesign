@@ -1,87 +1,81 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 typedef struct node_s {
-    char data;
-    struct node_s * right, * left;
-} tree_t;
-typedef tree_t * btree;
-btree newTree(char data){
-    btree node = (btree)malloc(sizeof(tree_t));
-    node ->data = data;
-    node ->left = NULL;
-    node ->right = NULL;
-    return node;
-}
-int search(char data[], char find, int start, int end){
-    for (int i = start; i <= end; i++)
-    {
-        if(data[i]==find) return i;
-    }return -1;
-}
-btree buildPreIn(char pre[], char in[], int start, int end, int *preIndex){
-    if(start > end) return NULL;
-    btree node = newTree(pre[(*preIndex)++]);
-    if(start == end)return node;
-    int inedx = search(in, node->data, start, end);
-    node->left = buildPreIn(pre, in, start, inedx-1, preIndex);
-    node->right = buildPreIn(pre, in, inedx+1, end, preIndex);
-    return node;
-}
+    int id;
+    int time;
+    struct node_s * nexts[30];
+    int nextCount;
+    int next[30];
+} task_t;
+typedef task_t * pTask;
 
-btree buildPostIn(char pre[], char in[], int start, int end, int *preIndex){
-    if(start > end) return NULL;
-    btree node = newTree(pre[(*preIndex)--]);
-    if(start == end)return node;
-    int inedx = search(in, node->data, start, end);
-    node->left = buildPostIn(pre, in, start, inedx-1, preIndex);
-    node->right = buildPostIn(pre, in, inedx+1, end, preIndex);
-    return node;
-}
-int height(btree node){
-    if(node == NULL) return 0;
-    else{
-        int lheight = height(node->left);
-        int rheight = height(node->right);
-        return (lheight> rheight)? lheight + 1:rheight +1;
-    }
-}
-
-void printLevel(btree root, int i){
-    if(root == NULL) return;
-    if(i == 1) printf("%c", root->data);
-    else if(i > 1){
-        printLevel(root->left, i - 1);
-        printLevel(root->right, i -1);
-    }
-}
-void printTree(btree root, int n){
-    int h = height(root);
-    for (int i = 1; i <= h; i++)
+void dfs(int u, task_t nodes[], int dp[], int pre[]){
+    for (int i = 0; i < nodes[u].nextCount; i++)
     {
-        printLevel(root, i);
+        int v = nodes[u].next[i];
+        if(dp[v] < dp[u]+nodes[v].time){
+            dp[v] = dp[u]+nodes[v].time;
+            pre[v] = u;
+            dfs(v, nodes, dp, pre);
+        }
     }
-    printf("\n");
     
 }
-int main(){
-    int count = 0;
-    char type1, type2, data1[100], data2[100];
-    scanf("%d", &count);
-    scanf(" %c", &type1);
-    scanf("%s", data1);
-    scanf(" %c", &type2);
-    scanf("%s", data2);
-    btree root = NULL;
-    if((type1=='P' && type2 =='I') ||(type1=='I' && type2 =='P')){
-        char *pre = (type1 == 'P')? data1:data2;
-        char *in = (type1 == 'I')? data1:data2;
-        int preIndex = 0;
-        root = buildPreIn(pre, in, 0, count-1, &preIndex);
-    }else if((type1=='O' && type2 =='I') ||(type1=='I' && type2 =='O')){
-        char *pre = (type1 == 'O')? data1:data2;
-        char *in = (type1 == 'I')? data1:data2;
-        int preIndex = count-1;
-        root = buildPostIn(pre, in, 0, count-1, &preIndex);
+int max(int a, int b){return (a>b)?a:b;}
+
+void printPath(int end, int pre[]){
+    if(pre[end] == -1){
+        printf("%d ", end);
+        return;
     }
-    printTree(root, count);
+    printPath(pre[end], pre);
+    printf("%d ", end);
+}
+int main(){
+    int command = 0, M = 0;
+    scanf("%d", &command);
+    scanf("%d", &M);
+    task_t nodes[M+1];
+    int pre[M+1];
+    int dp[M+1];
+    memset(pre, -1, sizeof(pre));
+    memset(dp, 0, sizeof(dp));
+    for (int i = 1; i <= M; i++)
+    {
+        scanf("%d %d", &nodes[i].time, &nodes[i].nextCount);
+        dp[i] = nodes[i].time;
+        for (int j = 0; j < nodes[i].nextCount; j++)
+        {
+            scanf("%d", &nodes[i].next[j]);
+        }
+    }
+    for (int i = 1; i <= M; i++)
+    {
+        dfs(i, nodes, dp, pre);
+    }
+    if(command == 1){
+        int min = 0;
+        for (int i = 1; i <=M; i++)
+        {
+            min = max(min, dp[i]);
+        }
+        printf("%d\n", min);
+    }else if(command == 2){
+        int max = 0;
+        int end_node = 1;
+        for (int i = 1; i <= M; i++)
+        {
+            if(dp[i] > max){
+                max = dp[i];
+                end_node = i;
+            }
+        }
+        printPath(end_node, pre);
+        printf("\n");
+        
+    }
+    
+    
+    
+
 }
