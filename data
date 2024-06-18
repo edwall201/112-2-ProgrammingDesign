@@ -1,0 +1,277 @@
+Welcome to Node.js v20.10.0.
+Type ".help" for more information.
+>     node ->left = NULL;
+          ^
+
+Uncaught SyntaxError: Unexpected token '>'
+>     node ->right = NULL;
+          ^
+
+Uncaught SyntaxError: Unexpected token '>'
+>     return node;
+    ^^^^^^
+
+Uncaught SyntaxError: Illegal return statement
+> }
+^
+
+Uncaught SyntaxError: Unexpected token '}'
+> > int search(char data[], char find, int start, int end){
+    ^^^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'search'
+>     for (int i = start; i <= end; i++)
+             ^
+
+Uncaught SyntaxError: Unexpected identifier 'i'
+> ...         if(data[i] == find) return i;
+                            ^^^^^^
+
+Uncaught SyntaxError: Illegal return statement
+>     }
+    ^
+
+Uncaught SyntaxError: Unexpected token '}'
+>     return -1;
+    ^^^^^^
+
+Uncaught SyntaxError: Illegal return statement
+> }
+^
+
+Uncaught SyntaxError: Unexpected token '}'
+> > btree buildPreIn(char pre[], char in[], int start, int end, int *preindex){
+      ^^^^^^^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'buildPreIn'
+> Uncaught ReferenceError: printf is not defined
+>     if(start > end) return NULL;
+                    ^^^^^^
+
+Uncaught SyntaxError: Illegal return statement
+>     btree node = newNode(pre[(*preindex) ++]);
+          ^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'node'
+>     if(start == end) return node;
+                     ^^^^^^
+
+Uncaught SyntaxError: Illegal return statement
+>     int index = search(in, node->data, start, end);
+        ^^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'index'
+>     node->left = buildPreIn(pre, in, start, index - 1, preindex);
+         ^
+
+Uncaught SyntaxError: Unexpected token '>'
+>     node->right = buildPreIn(pre, in, index +1, end, preindex);
+         ^
+
+Uncaught SyntaxError: Unexpected token '>'
+>     return node;
+    ^^^^^^
+
+Uncaught SyntaxError: Illegal return statement
+> }
+^
+
+Uncaught SyntaxError: Unexpected token '}'
+> btree buildPostIn(char post[], char in[], int start, int end, int *preindex){
+      ^^^^^^^^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'buildPostIn'
+>     if(start > end) return NULL;
+                    ^^^^^^
+
+Uncaught SyntaxError: Illegal return statement
+>     btree node = newNode(post[(*preindex) --]);
+          ^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'node'
+>     if(start == end) return node;
+                     ^^^^^^
+
+Uncaught SyntaxError: Illegal return statement
+>     int index = search(in, node->data, start, end);
+        ^^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'index'
+>     node->left = buildPostIn(post, in, start, index - 1, preindex);
+         ^
+
+Uncaught SyntaxError: Unexpected token '>'
+>     node->right = buildPostIn(post, in, index    node->right = buil   return node;
+         ^
+
+Uncaught SyntaxError: Unexpected token '>'
+> }
+^
+
+Uncaught SyntaxError: Unexpected token '}'
+> > int height(btree node){
+    ^^^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'height'
+>     if(node == NULL) return 0;
+                     ^^^^^^
+
+Uncaught SyntaxError: Illegal return statement
+>     else{
+    ^^^^
+
+Uncaught SyntaxError: Unexpected token 'else'
+>         int rheight = height(node->right);
+            ^^^^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'rheight'
+>         int lheight = height(node->left);
+            ^^^^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'lheight'
+>         return (rheight > lheight)? rheight + 1: lheight +1;
+        ^^^^^^
+
+Uncaught SyntaxError: Illegal return statement
+>     }
+    ^
+
+Uncaught SyntaxError: Unexpected token '}'
+> }
+^
+
+Uncaught SyntaxError: Unexpected token '}'
+> > void printLevel(btree node, int level){
+                ^^^^^
+
+Uncaught SyntaxError: missing ) after argument list
+>     if(level==0) return;
+                 ^^^^^^
+
+Uncaught SyntaxError: Illegal return statement
+>     if(level == 1) printf("%c", node->data);
+                                     ^
+
+Uncaught SyntaxError: Unexpected token '>'
+>     else if(level > 1){
+    ^^^^
+
+Uncaught SyntaxError: Unexpected token 'else'
+>         printLevel(node->left, level -1);
+                        ^
+
+Uncaught SyntaxError: Unexpected token '>'
+>         printLevel(node->right, level - 1);
+                        ^
+
+Uncaught SyntaxError: Unexpected token '>'
+>     }
+    ^
+
+Uncaught SyntaxError: Unexpected token '}'
+> }
+^
+
+Uncaught SyntaxError: Unexpected token '}'
+> void printTree(btree node){
+               ^^^^^
+
+Uncaught SyntaxError: missing ) after argument list
+>     int h = height(node);
+        ^
+
+Uncaught SyntaxError: Unexpected identifier 'h'
+>     for (int i = 1; i <= h; i++)
+             ^
+
+Uncaught SyntaxError: Unexpected identifier 'i'
+> ... ... Uncaught ReferenceError: printLevel is not defined
+> }
+^
+
+Uncaught SyntaxError: Unexpected token '}'
+> > int main(){
+    ^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'main'
+>     int n = 0;
+        ^
+
+Uncaught SyntaxError: Unexpected identifier 'n'
+>     char type1, type2;
+         ^^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'type1'
+>     char data1[100], data2[100];
+         ^^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'data1'
+>     scanf("%d", &n);
+                ^
+
+Uncaught SyntaxError: Unexpected token '&'
+>     scanf(" %c", &type1);
+                 ^
+
+Uncaught SyntaxError: Unexpected token '&'
+> Uncaught ReferenceError: scanf is not defined
+>     scanf(" %c", &type2);
+                 ^
+
+Uncaught SyntaxError: Unexpected token '&'
+> Uncaught ReferenceError: scanf is not defined
+>     btree root = NULL;
+          ^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'root'
+> ...         char *pre = (type1 == 'P')?data1:data2;
+        ^^^^^^^^^
+
+Uncaught SyntaxError: Invalid left-hand side in assignment
+>         char *in = (type1 == 'I')? data1:data2;
+              ^^
+
+Uncaught SyntaxError: Unexpected token 'in'
+>         int preIndex = 0;
+            ^^^^^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'preIndex'
+>         root = buildPreIn(pre, in, 0, n -1, &preIndex);
+                               ^^
+
+Uncaught SyntaxError: Unexpected token 'in'
+>     }else if((type1 == 'O' && type2 == 'I') || (type1 == 'I' && type2 == 'O')){
+    ^
+
+Uncaught SyntaxError: Unexpected token '}'
+>         char *pre = (type1 == 'O')?data1:data2;
+        ^^^^^^^^^
+
+Uncaught SyntaxError: Invalid left-hand side in assignment
+>         char *in = (type1 == 'I')? data1:data2;
+              ^^
+
+Uncaught SyntaxError: Unexpected token 'in'
+>         int preIndex = n - 1;
+            ^^^^^^^^
+
+Uncaught SyntaxError: Unexpected identifier 'preIndex'
+>         root = buildPostIn(pre, in, 0, n - 1, &preIndex);
+                                ^^
+
+Uncaught SyntaxError: Unexpected token 'in'
+>     }
+    ^
+
+Uncaught SyntaxError: Unexpected token '}'
+> Uncaught ReferenceError: printTree is not defined
+> Uncaught ReferenceError: free is not defined
+>     return 0;
+    ^^^^^^
+
+Uncaught SyntaxError: Illegal return statement
+> }
+^
+
+Uncaught SyntaxError: Unexpected token '}'
+> 
