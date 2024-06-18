@@ -1,78 +1,120 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-typedef struct node_s {
-    int id;
-    int time;
-    struct node_s * nexts[30];
-    int nextCount;
-    int next[30];
-} task_t;
-typedef task_t * pTask;
+#include <stdlib.h>
+typedef struct {
+    char *words;
+    int count;
+}WordEntry;
 
-void dfs(int u, task_t node[], int dp[], int pre[]){
-    for (int i =  0; i < node[u].nextCount; i++)
+void insertBefore(char *arr[], char p[], char q[], int totalcount){
+    for (int i = 0; i < totalcount; i++)
     {
-        int v = node[u].next[i];
-        if(dp[v] < dp[u] + node[v].time){
-            dp[v] = dp[u] + node[v].time;
-            pre[v] = u;
-            dfs(v, node, dp, pre);
-        }
-    } 
-}
-int max(int a, int b){
-    return (a>b)?a:b;
+        if(strcmp(arr[i],p) == 0) printf("%s ",q);
+        printf("%s ", arr[i]);
+    }
+    printf("\n");
 }
 
-void printPath(int end, int pre[]){
-    if(pre[end] == -1){
-        printf("%d ", end);
-        return;
+void replace(char *arr[], char p[], char q[], int totalcount){
+    for (int i = 0; i < totalcount; i++)
+    {
+        if(strcmp(arr[i],p) == 0) printf("%s ",q);
+        else printf("%s ", arr[i]);
     }
-    printPath(pre[end], pre);
-    printf("%d ",end);
+    printf("\n");
 }
-int main(){
-    int command, M;
-    scanf("%d", &command);
-    scanf("%d", &M);
-    task_t nodes[M+1];
-    int dp[M+1];
-    int pre[M+1];
-    memset(dp, 0, sizeof(dp));
-    memset(pre, -1, sizeof(pre));
-    for (int i = 1; i <= M; i++)
+void delete(char *arr[], char p[], char q[], int totalcount){
+    for (int i = 0; i < totalcount; i++)
     {
-        scanf("%d %d", &nodes[i].time, &nodes[i].nextCount);
-        dp[i] = nodes[i].time;
-        for (int j = 0; j < nodes[i].nextCount; j++){
-            scanf("%d",&nodes[i].next[j]);
+        if(strcmp(arr[i],p) != 0) printf("%s ", arr[i]);
+    }
+    printf("\n");
+}
+void lowFrequency(char *arr[], int totalcount, int n){
+    WordEntry worldentry[1000];
+    int newcount = 0;
+    for (int i = 0; i < totalcount; i++)
+    {
+        int found = 0;
+        for (int j = 0; j < newcount; j++)
+        {
+           if(strcmp(arr[i], worldentry[j].words) == 0){
+            worldentry[j].count ++;
+            found =1;
+           }
+        }
+        if(! found){
+            worldentry[newcount].words = arr[i];
+            worldentry[newcount].count += 1;
+            newcount += 1;
         }
     }
-    for (int i = 1; i <=M ; i++)
+    for (int i = 0; i < totalcount; i++)
     {
-        dfs(i, nodes, dp, pre);
-    }
-    if(command == 1){
-        int min = 0;
-        for (int i = 1; i <= M; i++)
+        for (int j = 0; j < newcount; j++)
         {
-            min = max(min, dp[i]);
-        }
-        printf("%d\n", min);
-    }else if(command == 2){
-        int max_time = 0;
-        int end_node = 1;
-        for (int i = 0; i <= M; i++)
-        {
-            if(dp[i] > max_time){
-                max_time = dp[i];
-                end_node = i;
+            if(strcmp(arr[i], worldentry[j].words) == 0 && worldentry[j].count >= n){
+                printf("%s ", arr[i]);
+                break;
             }
         }
-        printPath(end_node, pre);
-        printf("\n");
     }
-    
+    printf("\n");
+}
+int compare(const void *a, const void *b){
+    WordEntry *A = (WordEntry *)a;
+    WordEntry *B = (WordEntry *)b;
+    if(A->count != B->count) return A->count - B->count;
+    else return strcmp(A->words, B->words);
+}
+void frequency(char *arr[], int totalcount){
+    WordEntry worldentry[1000];
+    int newcount = 0;
+    for (int i = 0; i < totalcount; i++)
+    {
+        int found = 0;
+        for (int j = 0; j < newcount; j++)
+        {
+           if(strcmp(arr[i], worldentry[j].words) == 0){
+            worldentry[j].count ++;
+            found =1;
+           }
+        }
+        if(! found){
+            worldentry[newcount].words = arr[i];
+            worldentry[newcount].count += 1;
+            newcount += 1;
+        }
+    }
+    qsort(worldentry,newcount, sizeof(WordEntry), compare);
+    for (int i = 0; i < 3; i++)
+    {
+        printf("%s:%d\n", worldentry[i].words, worldentry[i].count);
+    }
+}
+
+int main(){
+    char article[1000], p[100], q[100];
+    int command = 0;
+    fgets(article, sizeof(article), stdin);
+    scanf("%s", p);
+    scanf("%s",q);
+    scanf("%d", &command);
+    article[strcspn(article,"\n")] = 0;
+    char *token = strtok(article, " ");
+    char *arr[1000];
+    int totalcount = 0;
+    while (token != NULL)
+    {
+        arr[totalcount++] = token;
+        token = strtok(NULL, " ");
+    }
+    if(command == 1) insertBefore(arr, p, q, totalcount);
+    else if(command == 2) replace(arr, p, q, totalcount);
+    else if(command == 3) delete(arr, p, q, totalcount);
+    else if(command == 4) {
+        int n = 0;
+        scanf("%d", &n);
+        lowFrequency(arr, totalcount, n);
+    }else if (command == 5) frequency(arr, totalcount);
 }
