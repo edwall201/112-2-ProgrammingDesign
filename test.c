@@ -1,133 +1,108 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-typedef struct 
+#include <string.h>
+typedef struct node_s
 {
-    char *word;
-    int count;
-}wordEntry;
+    char data;
+    struct node_s *right, *left;
+} tree_t;
+typedef tree_t *btree;
 
-void insertBefore(char *arr[], char p[], char q[],int totalcount){
-    for (int i = 0; i < totalcount; i++)
+btree newnode(char data)
+{
+    btree node = (btree)malloc(sizeof(tree_t));
+    node->data = data;
+    node->right = NULL;
+    node->left = NULL;
+    return node;
+}
+int search(char in[], char data, int start, int end)
+{
+    for (int i = start; i <= end; i++)
     {
-        if(strcmp(arr[i],p) == 0) printf("%s ",q);
-        printf("%s ",arr[i]);
+        if (in[i] == data)
+            return i;
+    }
+    return -1;
+}
+btree buildPreIn(char pre[], char in[], int start, int end, int *preIndex)
+{
+    if (start > end)
+        return NULL;
+    btree node = newnode(pre[(*preIndex)++]);
+    if (start == end)
+        return node;
+    int index = search(in, node->data, start, end);
+    node->left = buildPreIn(pre, in, start, index - 1, preIndex);
+    node->right = buildPreIn(pre, in, index + 1, end, preIndex);
+    return node;
+}
+btree buildPostIn(char pre[], char in[], int start, int end, int *preIndex)
+{
+    if (start > end)
+        return NULL;
+    btree node = newnode(pre[(*preIndex)--]);
+    if (start == end)
+        return node;
+    int index = search(in, node->data, start, end);
+    node->left = buildPostIn(pre, in, start, index - 1, preIndex);
+    node->right = buildPostIn(pre, in, index + 1, end, preIndex);
+    return node;
+}
+int height(btree node)
+{
+    if (node != NULL)
+    {
+        int lheight = height(node->left);
+        int rheight = height(node->right);
+        return (lheight > rheight) ? lheight + 1 : rheight + 1;
+    }
+    else
+        return 0;
+}
+void printLevel(btree node, int level)
+{
+    if (node == NULL)
+        return;
+    if (level == 1)
+        printf("%c", node->data);
+    else if (level > 1)
+    {
+        printLevel(node->left, level - 1);
+        printLevel(node->right, level - 1);
+    }
+}
+void printTree(btree node)
+{
+    int h = height(node);
+    for (int i = 0; i <= h; i++)
+    {
+        printLevel(node, i);
     }
     printf("\n");
-    
 }
-void replace(char *arr[], char p[], char q[],int totalcount){
-    for (int i = 0; i < totalcount; i++)
+int main()
+{
+    int count = 0;
+    char type1, type2, data1[100], data2[100];
+    scanf("%d", &count);
+    scanf(" %c", &type1);
+    scanf("%s", data1);
+    scanf(" %c", &type2);
+    scanf("%s", data2);
+    btree root = NULL;
+    if ((type1 == 'P' && type2 == 'I') || (type1 == 'I' && type2 == 'P'))
     {
-        if(strcmp(arr[i],p) == 0) printf("%s ",q);
-        else printf("%s ",arr[i]);
-    }
-    printf("\n");
-    
-}
-void delete(char *arr[], char p[],int totalcount){
-    for (int i = 0; i < totalcount; i++)
+        char *pre = (type1 == 'P') ? data1 : data2;
+        char *in = (type1 == 'I') ? data1 : data2;
+        int preIndex = 0;
+        root = buildPreIn(pre, in, 0, count - 1, &preIndex);
+    }else if ((type1 == 'O' && type2 == 'I') || (type1 == 'I' && type2 == 'O'))
     {
-        if(strcmp(arr[i],p) == 0) continue;
-        else printf("%s ",arr[i]);
+        char *pre = (type1 == 'O') ? data1 : data2;
+        char *in = (type1 == 'I') ? data1 : data2;
+        int preIndex = count - 1;
+        root = buildPostIn(pre, in, 0, count - 1, &preIndex);
     }
-    printf("\n");
-}
-
-void lowFrquency(char *arr[], int totalcount, int n){
-    wordEntry newArr[1000] = {0};
-    int newCount = 0;
-    for (int i = 0; i < totalcount; i++)
-    {
-        int found = 0;
-        for (int j = 0; j < newCount; j++)
-        {
-            if(strcmp(arr[i], newArr[j].word) == 0){
-                found = 1;
-                newArr[j].count ++;
-                break;
-            }
-        }
-        if(!found){
-            newArr[newCount].word = arr[i];
-            newArr[newCount].count =1;
-            newCount +=1;
-        }      
-    }
-    for (int i = 0; i < totalcount; i++)
-    {
-        for (int j = 0; j < newCount; j++)
-        {
-            if(strcmp(arr[i], newArr[j].word) == 0 && newArr[j].count >= n){
-                printf("%s ", arr[i]);
-                break;
-            }
-        }   
-    }
-    printf("\n");
-}
-
-int compare(const void *a, const void *b){
-    wordEntry *A = (wordEntry *)a;
-    wordEntry *B = (wordEntry *)b;
-    if(A->count != B->count) return A->count - B->count;
-    return strcmp(A->word, B->word);
-}
-
-void Frquency(char *arr[], int totalcount){
-    wordEntry newArr[1000] = {0};
-    int newCount = 0;
-    for (int i = 0; i < totalcount; i++)
-    {
-        int found = 0;
-        for (int j = 0; j < newCount; j++)
-        {
-            if(strcmp(arr[i], newArr[j].word) == 0){
-                found = 1;
-                newArr[j].count ++;
-                break;
-            }
-        }
-        if(!found){
-            newArr[newCount].word = arr[i];
-            newArr[newCount].count =1;
-            newCount +=1;
-        }      
-    }
-    qsort(newArr, newCount, sizeof(wordEntry), compare);
-    for (int i = 0; i < 3; i++)
-    {
-        printf("%s:%d\n", newArr[i].word, newArr[i].count);
-    
-    }
-
-}
-
-int main(){
-    int command;
-    char article[1000], p[100], q[100];
-    fgets(article, sizeof(article), stdin);
-    scanf("%s", p);
-    scanf("%s",q);
-    scanf("%d", &command);
-    article[strcspn(article,"\n")] = 0;
-    char *arr[1000];
-    char *token = strtok(article," ");
-    int totalcount=0;
-    while (token!= NULL)
-    {
-        arr[totalcount++] = token;
-        token = strtok(NULL," ");
-    }
-    if(command ==1) insertBefore(arr, p, q, totalcount);
-    if(command ==2) replace(arr, p, q, totalcount);
-    if(command ==3) delete(arr, p, totalcount);
-    if (command == 4)
-    {
-        int n;
-        scanf("%d", &n);
-        lowFrquency(arr, totalcount, n);
-    }
-    else if(command == 5) Frquency(arr, totalcount);
-    
+    printTree(root);
 }
