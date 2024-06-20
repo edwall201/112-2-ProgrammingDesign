@@ -97,11 +97,7 @@ void pringShape(shape_t *shapes[], int num)
     {
         printf("%s %d %d\n", shapes[i]->name, shapes[i]->perimeter(shapes[i]), shapes[i]->area(shapes[i]));
     }
-    
 }
-
-
-
 
 int main()
 {
