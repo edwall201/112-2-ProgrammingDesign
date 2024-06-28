@@ -75,7 +75,6 @@ int height(btree node) {
     }
 }
 
-// 打印指定層級的節點
 void printGivenLevel(btree root, int level) {
     if (root == NULL)
         return;
@@ -87,7 +86,6 @@ void printGivenLevel(btree root, int level) {
     }
 }
 
-// 層序遍歷打印二元樹
 void printLevelOrder(btree root) {
     int h = height(root);
     for (int i = 1; i <= h; i++)
